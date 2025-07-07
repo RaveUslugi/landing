@@ -1,0 +1,143 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="h-screen flex flex-col gap-8 items-center justify-center">
+    <img class="w-64 h-64" src="favicon.svg" alt="Рейвуслуги" />
+    <p id="text" class="text-2xl md:text-5xl text-center"></p>
+    <p id="timer" class="text-2xl font-mono text-center"></p>
+    <p id="date" class="text-xl font-mono text-center"></p>
+  </div>
+
+  <script>
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
+    let day = 1;
+    let month = 1;
+
+    const comingSoonVariants = [
+      "Скоро открытие",
+      "Скоро здесь",
+      "Скоро будет",
+      "В разработке",
+      "Готовится",
+      "Скоро всё изменится",
+      "Готовим сюрприз",
+      "Скоро откроемся",
+      "В процессе создания",
+      "Скоро запуск",
+      "Скоро запустимся",
+      "Скоро онлайн",
+      "Готовим к запуску",
+      "Скоро откроем двери",
+      "Скоро узнаете",
+      "Готовим что-то особенное",
+      "Скоро всё станет ясно",
+      "В процессе волшебства",
+    ];
+
+    const now = new Date();
+    const currentDay = now.getDate();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+
+    if (currentYear === 2025) {
+      day = Math.max(currentDay + 1, 1);
+      month = currentMonth;
+    } else {
+      day = 1;
+      month = 1;
+    }
+
+    function updateTimer() {
+      const hoursStr = hours.toString().padStart(2, "0");
+      const minutesStr = minutes.toString().padStart(2, "0");
+      const secondsStr = seconds.toString().padStart(2, "0");
+
+      const timerElement = document.getElementById("timer");
+      if (timerElement) {
+        timerElement.textContent = `${hoursStr}:${minutesStr}:${secondsStr}`;
+      }
+    }
+
+    function updateDate() {
+      const dayStr = day.toString().padStart(2, "0");
+      const monthNames = [
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря",
+      ];
+      const monthName = monthNames[month - 1] || "января";
+
+      const dateElement = document.getElementById("date");
+      if (dateElement) {
+        dateElement.textContent = `${dayStr} ${monthName} 2025`;
+      }
+    }
+
+    function updateComingSoon() {
+      const randomText =
+        comingSoonVariants[
+          Math.floor(Math.random() * comingSoonVariants.length)
+        ];
+      const comingSoonElement = document.querySelector("#text") as HTMLElement;
+      if (comingSoonElement) {
+        typeText(comingSoonElement, randomText);
+      }
+    }
+
+    function typeText(element: HTMLElement, text: string) {
+      element.textContent = "";
+      let index = 0;
+
+      function typeChar() {
+        if (index < text.length) {
+          element.innerHTML =
+            text.substring(0, index + 1) +
+            '<span class="animate-pulse">|</span>';
+          index++;
+          setTimeout(typeChar, 80);
+        } else {
+          element.innerHTML = text + '<span class="animate-pulse">|</span>';
+        }
+      }
+
+      typeChar();
+    }
+
+    setInterval(() => {
+      seconds = (seconds + Math.floor(Math.random() * 10) + 1) % 60;
+      minutes = (minutes + Math.floor(Math.random() * 10) + 1) % 60;
+      hours = (hours + Math.floor(Math.random() * 10) + 1) % 24;
+
+      day = Math.floor(Math.random() * 31) + 1;
+      if (currentYear === 2025) {
+        month =
+          currentMonth + Math.floor(Math.random() * (12 - currentMonth + 1));
+        if (month === 0) month = currentMonth + 1;
+      } else {
+        month = Math.floor(Math.random() * 12) + 1;
+      }
+
+      updateComingSoon();
+
+      updateTimer();
+      updateDate();
+    }, 3000);
+
+    updateTimer();
+    updateDate();
+    updateComingSoon();
+  </script>
+</Layout>
